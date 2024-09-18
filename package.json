@@ -1,0 +1,16 @@
+{
+    "app_name": "hr",
+    "main": "index.html",
+    "name": "hr",
+    "webkit": {},
+    "window": {
+        "exe_icon": "logo-removebg-preview.png",
+        "frame": true,
+        "id": "hr",
+        "resizable": true,
+        "show": true,
+        "show_in_taskbar": true,
+        "title": "hr",
+        "visible": true
+    }
+}

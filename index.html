@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Survey</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            direction: rtl;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #003366;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #003366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        button:hover {
+            background-color: #002244;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Employee Survey</h1>
+        <form id="surveyForm">
+            <!-- Questions will be added here by JavaScript -->
+        </form>
+        <button type="button" onclick="submitSurvey()">Submit</button>
+    </div>
+    <script>
+        const questions = [
+            { question: "Do you have experience in this field?", type: "yesno" },
+            { question: "What is your education level?", type: "multiple", options: ["High School", "Diploma", "Bachelor's Degree", "Master's Degree", "PhD"] },
+            { question: "What are your core skills?", type: "multiple", options: ["Programming", "Design", "Project Management", "Marketing", "Sales"] },
+            { question: "Are you ready to work in a team?", type: "yesno" },
+            { question: "How many years of experience do you have?", type: "multiple", options: ["1-2 Years", "3-5 Years", "6-10 Years", "More than 10 Years"] },
+            { question: "Do you have any professional certifications?", type: "yesno" },
+            { question: "What programming languages do you know?", type: "multiple", options: ["JavaScript", "Python", "Java", "C++", "Ruby"] },
+            { question: "Do you have experience working remotely?", type: "yesno" },
+            { question: "What are your career goals?", type: "multiple", options: ["Personal Development", "Career Advancement", "Career Change", "Start a Private Project"] },
+            { question: "Can you work under pressure?", type: "yesno" },
+            { question: "What are your preferred working hours?", type: "multiple", options: ["Morning", "Evening", "Flexible"] },
+            { question: "Do you have any other commitments that might affect your work?", type: "yesno" },
+            { question: "Do you have the ability to learn quickly?", type: "yesno" },
+            { question: "What type of work environment do you prefer?", type: "multiple", options: ["Traditional Office", "Remote Work", "Hybrid"] },
+            // Additional questions
+            { question: "What is your preferred method of communication?", type: "multiple", options: ["Email", "Phone", "Messaging Apps", "In-Person"] },
+            { question: "What motivates you at work?", type: "multiple", options: ["Recognition", "Salary", "Career Growth", "Work-Life Balance"] },
+            { question: "How do you handle conflict in the workplace?", type: "multiple", options: ["Directly Address", "Seek Mediation", "Avoid Conflict", "Discuss with Manager"] },
+            { question: "What is your experience with project management tools?", type: "multiple", options: ["None", "Basic", "Intermediate", "Advanced"] },
+            { question: "Are you open to working in different locations?", type: "yesno" },
+            { question: "Do you prefer working on multiple projects simultaneously?", type: "yesno" },
+            { question: "How do you prioritize your tasks?", type: "multiple", options: ["By Deadline", "By Importance", "By Urgency", "Randomly"] },
+            { question: "What is your approach to learning new skills?", type: "multiple", options: ["Online Courses", "Workshops", "Self-Study", "Formal Education"] },
+            { question: "Do you have experience in leadership roles?", type: "yesno" },
+            { question: "How do you stay updated with industry trends?", type: "multiple", options: ["News Websites", "Social Media", "Industry Journals", "Networking Events"] }
+        ];
+
+        function loadQuestions() {
+            const form = document.getElementById('surveyForm');
+
+            questions.forEach((q, index) => {
+                const questionLabel = document.createElement('label');
+                questionLabel.innerText = q.question;
+                form.appendChild(questionLabel);
+
+                if (q.type === "yesno") {
+                    const yesOption = document.createElement('input');
+                    yesOption.type = 'radio';
+                    yesOption.name = `question${index}`;
+                    yesOption.value = 'Yes';
+                    form.appendChild(yesOption);
+                    form.appendChild(document.createTextNode(' Yes '));
+
+                    const noOption = document.createElement('input');
+                    noOption.type = 'radio';
+                    noOption.name = `question${index}`;
+                    noOption.value = 'No';
+                    form.appendChild(noOption);
+                    form.appendChild(document.createTextNode(' No '));
+                } else if (q.type === "multiple") {
+                    const select = document.createElement('select');
+                    select.name = `question${index}`;
+                    q.options.forEach(option => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = option;
+                        optionElement.innerText = option;
+                        select.appendChild(optionElement);
+                    });
+                    form.appendChild(select);
+                }
+            });
+        }
+
+        function submitSurvey() {
+            const form = document.getElementById('surveyForm');
+            const formData = new FormData(form);
+            const entries = {};
+            formData.forEach((value, key) => {
+                entries[key] = value;
+            });
+
+            // Use jsPDF to create the PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            let y = 10;
+            doc.setFontSize(12);
+            doc.text("Employee Survey", 105, y, { align: "center" });
+
+            y += 20;  // Increase space between title and content
+            questions.forEach((q, index) => {
+                doc.setFontSize(10);
+                doc.text(`${q.question}`, 10, y);
+                y += 7;
+
+                doc.setFontSize(12);
+                doc.text(`Answer: ${entries[`question${index}`] || "Not Answered"}`, 10, y);
+                y += 15; // Increase space between questions for clarity
+            });
+
+            doc.save("survey_results.pdf");
+        }
+
+        document.addEventListener('DOMContentLoaded', loadQuestions);
+    </script>
+</body>
+</html>
